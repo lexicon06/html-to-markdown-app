@@ -66,7 +66,7 @@ Screenshots
 
 Shows the input and output areas with conversion controls.
 
-![https://www.pablosan.dev/projects/htmltomd/demo.jpg]
+![Demo screenshot](https://www.pablosan.dev/projects/htmltomd/demo.jpg)
 
 Dependencies
 ------------
