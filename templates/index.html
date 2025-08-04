@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to Markdown Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>HTML to Markdown Converter</h1>
+        </header>
+
+        <main class="app-content">
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>Paste your HTML here</h2>
+                </div>
+                <textarea id="html-input" placeholder="Paste your HTML code here..."></textarea>
+                <div class="button-container">
+                    <button id="convert-btn" class="primary-button">
+                        <i class="fas fa-exchange-alt"></i> Convert to Markdown
+                    </button>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <div class="section-header">
+                    <h2>Markdown Output</h2>
+                    <button id="copy-btn" class="secondary-button">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <textarea id="markdown-output" placeholder="Your Markdown will appear here..." readonly></textarea>
+            </section>
+        </main>
+
+        <div id="alert" class="alert hidden"></div>
+    </div>
+
+    <script>
+        document.getElementById('convert-btn').addEventListener('click', async () => {
+            const htmlInput = document.getElementById('html-input').value;
+            const markdownOutput = document.getElementById('markdown-output');
+            
+            if (!htmlInput.trim()) {
+                showAlert('Please enter some HTML to convert', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `html_content=${encodeURIComponent(htmlInput)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    markdownOutput.value = data.markdown;
+                    showAlert('Conversion successful!', 'success');
+                } else {
+                    showAlert(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to convert HTML: ' + error.message, 'error');
+            }
+        });
+        
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const markdownOutput = document.getElementById('markdown-output');
+            markdownOutput.select();
+            document.execCommand('copy');
+            showAlert('Copied to clipboard!', 'info');
+        });
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

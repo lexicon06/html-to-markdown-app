@@ -1,0 +1,2 @@
+Flask>=2.0.0
+html-to-markdown>=1.0.0  # or whatever package you're using
